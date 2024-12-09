@@ -64,7 +64,11 @@ def product_list_json(request):
         return JsonResponse({'error': str(e)}, status=500)
     
 def atolyeler(request):
-    return render(request, 'shop/atolyeler.html')
+    workshops = Workshop.objects.all().order_by('date')
+    context = {
+        'workshops': workshops,
+    }
+    return render(request, 'shop/atolyeler.html', context)
 
 
 

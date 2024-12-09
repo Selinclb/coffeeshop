@@ -57,14 +57,10 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">
-            <!-- Bülten Bölümü -->
+            <!-- Haritalar Bölümü -->
             <div class="footer-section">
-                <h3>Bize Ulaşın</h3>
-                <p>Abonelik fırsatlarından ve sınırlı üretim kutulardan haberdar olmak için kaydolun</p>
-                <form class="newsletter-form">
-                    <input type="email" placeholder="E-postanızı girin *" required>
-                    <button type="submit">Gönder</button>
-                </form>
+                <h3>Haritalar</h3>
+                <div id="map" style="width: 100%; height: 350px; padding: 10px; margin-top: 10px;"></div>
             </div>
 
             <!-- Mağaza Bölümü -->
@@ -118,6 +114,7 @@
     
     <!-- JavaScript dosyaları -->
     <script src="{% static 'js/script.js' %}"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBMsXC2Yk5OQ5C8Vo3CnFNs2NLcysl_XFg&callback=initMap"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

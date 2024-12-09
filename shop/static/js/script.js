@@ -855,4 +855,73 @@ class ProfileManager {
 // ProfileManager'ı başlat
 const profileManager = new ProfileManager();
 
+// Google Maps başlatma fonksiyonu
+function initMap() {
+    // Kahve dükkanının konumu (örnek koordinatlar)
+    const location = {
+        lat: 38.432028, 
+        lng: 27.138667  
+    };
+
+    // Harita seçenekleri
+    const mapOptions = {
+        zoom: 15,
+        center: location,
+        styles: [
+            {
+                "featureType": "all",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "color": "#f5f5f5"
+                    }
+                ]
+            },
+            {
+                "featureType": "poi.business",
+                "elementType": "labels.text",
+                "stylers": [
+                    {
+                        "visibility": "on"
+                    }
+                ]
+            }
+            // Daha fazla stil ekleyebilirsiniz
+        ]
+    };
+
+    // Haritayı oluştur
+    const map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+    // Marker ekle
+    const marker = new google.maps.Marker({
+        position: location,
+        map: map,
+        title: 'Coffee Shop'
+    });
+
+    // Info window ekle
+    const infoWindow = new google.maps.InfoWindow({
+        content: `
+            <div style="padding: 10px;">
+                <h4 style="margin: 0 0 5px;">Coffee Shop</h4>
+                <p style="margin: 0;">Adres bilgisi buraya gelecek</p>
+            </div>
+        `
+    });
+
+    // Marker'a tıklandığında info window'u göster
+    marker.addListener('click', () => {
+        infoWindow.open(map, marker);
+    });
+}
+
+// Sayfa yüklendiğinde haritayı başlat
+document.addEventListener('DOMContentLoaded', () => {
+    // Google Maps API yüklendiyse haritayı başlat
+    if (typeof google !== 'undefined') {
+        initMap();
+    }
+});
+
 
