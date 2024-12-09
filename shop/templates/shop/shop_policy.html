@@ -1,0 +1,20 @@
+{% extends 'shop/base.html' %}
+
+
+{% block title %}Mağaza Politikası - Coffee Shop{% endblock %}
+{% block content %}
+    <main class="shop-policy-page">
+        <div class="description-container">
+            <h1>Mağaza Politikası</h1>
+            <p>Bu sayfa, Coffee Shop'un mağaza politikasını içerir. Mağaza politikası, müşterilerimizin alışveriş yaparken göz önünde bulundurulması gereken kuralları ve koşulları içerir.</p>
+        </div>
+        <div class="content-container">
+            {% if settings.shop_policy %}
+                {{ settings.shop_policy|safe }}
+            {% else %}
+                <p>Henüz mağaza politikası eklenmemiş.</p>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}
+

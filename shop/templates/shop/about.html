@@ -1,0 +1,69 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Coffee Shop - Hakkımızda{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="about-hero">
+    <h1>Hikayemiz</h1>
+    <p>{{ about.description }}</p>
+</div>
+
+<!-- About Content -->
+<div class="about-content">
+    <div class="about-section">
+        <h2>Biz Kimiz?</h2>
+        <p>{{ about.detail }}</p>
+    </div>
+
+    <div class="about-values">
+        <div class="value-card">
+            <i class="fas fa-leaf"></i>
+            <h3>Sürdürülebilirlik</h3>
+            <p>Çevre dostu uygulamalarımız ve sürdürülebilir tarım politikalarımızla dünyamızı koruyoruz.</p>
+        </div>
+
+        <div class="value-card">
+            <i class="fas fa-handshake"></i>
+            <h3>Adil Ticaret</h3>
+            <p>Kahve üreticileriyle doğrudan çalışarak adil ticaret prensiplerine bağlı kalıyoruz.</p>
+        </div>
+
+        <div class="value-card">
+            <i class="fas fa-award"></i>
+            <h3>Kalite</h3>
+            <p>Her aşamada en yüksek kalite standartlarını uyguluyoruz.</p>
+        </div>
+
+        <div class="value-card">
+            <i class="fas fa-heart"></i>
+            <h3>Tutku</h3>
+            <p>Kahveye olan tutkumuz, yaptığımız her işe yansıyor.</p>
+        </div>
+    </div>
+
+    <!-- Ekip Section -->
+    <div class="team-section">
+        <h2>Ekibimiz</h2>
+        <p>Tutkulu ve deneyimli ekibimizle size en iyi kahve deneyimini sunuyoruz</p>
+        
+        <div class="team-grid">
+            {% for member in about.team_members.all %}
+            <div class="team-member">
+                <div class="member-image">
+                    {% if member.image %}
+                        <img src="{{ member.image.url }}" alt="{{ member.name }}">
+                    {% else %}
+                        <img src="{% static 'images/team.jpg' %}" alt="Varsayılan Ekip Üyesi Görseli">
+                    {% endif %}
+                </div>
+                <h3>{{ member.name }}</h3>
+                <p class="member-title">{{ member.title }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        <br><br><br>&nbsp;<br> &nbsp;<br>
+        <h2> Bize Ulaşın</h2>
+    </div>
+</div>
+{% endblock %} 

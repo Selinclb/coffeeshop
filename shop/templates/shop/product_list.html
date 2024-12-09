@@ -1,0 +1,104 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Coffee Shop - Ürünler{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+
+    <main>
+        <section class="product-list-section">
+            <div class="filter-sidebar">
+                <h3>Filtreler</h3>
+                <button onclick="clearFilters()" class="clear-filters">Filtreleri Temizle</button>
+                
+                <div class="filter-group" data-filter-type="type">
+                    <h4>Kahve Türü</h4>
+                    {% for category in categories %}
+                        <label>
+                            <input type="checkbox" value="{{ category.title|lower }}"> 
+                            {{ category.title }}
+                        </label>
+                    {% endfor %}
+                </div>
+                
+                <div class="filter-group" data-filter-type="price">
+                    <h4>Fiyat Aralığı</h4>
+                    <label><input type="radio" name="price" value="0-250"> 0-250 ₺</label>
+                    <label><input type="radio" name="price" value="250-400"> 250-400 ₺</label>
+                    <label><input type="radio" name="price" value="400-"> 400+ ₺</label>
+                </div>
+                
+                <div class="filter-group" data-filter-type="roast">
+                    <h4>Kavurma Derecesi</h4>
+                    {% for roast_value, roast_label in roast_choices %}
+                        <label>
+                            <input type="checkbox" value="{{ roast_value|lower }}"> 
+                            {{ roast_label }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="product-grid">
+                <div class="product-header">
+                    <h2>Kahve Çeşitlerimiz</h2>
+                    <div class="sort-options">
+                        <select id="sortProducts">
+                            <option value="featured">Öne Çıkanlar</option>
+                            <option value="price-low">Fiyat: Düşükten Yükseğe</option>
+                            <option value="price-high">Fiyat: Yüksekten Düşüğe</option>
+                            <option value="name">İsme Göre</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="products-container">
+                    {% for product in products %}
+                        <div class="product-card" data-type="{{ product.category.title|lower }}">
+                            <a href="{% url 'shop:product_detail' product.slug %}">
+                                <div class="product-image">
+                                    {% if product.image %}
+                                        <img src="{{ product.image.url }}" alt="{{ product.title }}">
+                                    {% else %}
+                                    {% load static %}
+                                        <img src="{% static 'images/default-product.jpg' %}" alt="{{ product.title }}">
+                                    {% endif %}
+                                    {% if product.is_bestseller %}
+                                        <span class="badge bestseller-badge">En Çok Satan</span>
+                                    {% endif %}
+                                    {% if product.is_on_sale %}
+                                        <span class="badge sale-badge">İndirimde</span>
+                                    {% endif %}
+                                    <span class="roast-badge">{{ product.get_roast_display }}</span>
+                                </div>
+                                <div class="product-info">
+                                    <h3>{{ product.title }}</h3>
+                                    {% if product.is_on_sale %}
+                                        <p class="price">
+                                            <span class="original-price">{{ product.price }} ₺</span>
+                                            <span class="sale-price">{{ product.sale_price }} ₺</span>
+                                        </p>
+                                    {% else %}
+                                        <p class="price">{{ product.price }} ₺</p>
+                                    {% endif %}
+                                    {% if product.status == 'True' and product.amount < 0 %}
+                                    {% comment %} {% if product.status == 'True' and product.amount > 0 %}
+                                        <button class="add-to-cart-btn" data-product-id="{{ product.id }}">
+                                            <p>Sepete Ekle</p>
+                                        </button>
+                                    {% else %} {% endcomment %}
+                                        <button class="out-of-stock" disabled>Tükendi</button>
+                                    {% endif %}
+                                </div>
+                            </a>    
+                        </div>
+                    {% empty %}
+                        <p>Henüz ürün bulunmamaktadır.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'js/product_list.js' %}"></script>
+{% endblock %}

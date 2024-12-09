@@ -1,0 +1,86 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}Coffee Shop - Ana Sayfa{% endblock %}
+
+{% block content %}
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="video-bg">
+                <video autoplay muted loop>
+                    <source src="/static/images/header.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="hero-content">
+                <h1>Kahvenin En İyi Hali</h1>
+                <a href="{% url 'shop:product_list' %}" class="cta-button">Hemen Keşfet</a>
+            </div>
+        </section>
+
+        <!-- Featured Products Section -->
+        <section class="featured-products">
+            <h2>Öne Çıkan Ürünler</h2>
+            <div class="products-grid">
+                {% for product in products %}
+                    {% if product.is_bestseller or product.is_on_sale %}
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="{{ product.image.url }}" alt="{{ product.title }}">
+                                {% if product.is_bestseller %}
+                                    <span class="badge bestseller-badge">En Çok Satan</span>
+                                {% endif %}
+                                {% if product.is_on_sale %}
+                                    <span class="badge sale-badge">İndirimde</span>
+                                {% endif %}
+                                <span class="roast-badge">{{ product.get_roast_display }}</span>
+                            </div>
+                            <div class="product-info">
+                                <h3>{{ product.title }}</h3>
+                                <div class="product-footer">
+                                    <div class="price-container">
+                                        {% if product.is_on_sale %}
+                                            <span class="original-price">{{ product.price }} TL</span>
+                                            <span class="sale-price">{{ product.sale_price }} TL</span>
+                                        {% else %}
+                                            <span class="price">{{ product.price }} TL</span>
+                                        {% endif %}
+                                    </div>
+                                    <button class="add-to-cart">Sipariş Ver</button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </section>
+        
+        <!-- Kahve Atölyeleri Section -->
+    <section class="menu-section">
+        <div class="section-title">
+            <h2>Kahve Atölyeleri</h2>
+            <p>Kahve tutkunları için özel hazırladığımız atölyelerimize katılın</p>
+        </div>
+        
+        <div class="menu-items">
+            {% for workshop in workshops %}
+                <div class="menu-item" data-workshop-id="{{ workshop.id }}">
+                    <div class="media-container">
+                        {% if workshop.get_media.type == 'video' %}
+                            <video autoplay muted loop playsinline>
+                                <source src="{{ workshop.get_media.url }}" type="video/mp4">
+                            </video>
+                        {% else %}
+                            <img src="{{ workshop.get_media.url }}" alt="{{ workshop.title }}">
+                        {% endif %}
+                    </div>
+                    <div class="menu-item-content">
+                        <h3>{{ workshop.title }}</h3>
+                        <p>{{ workshop.description }}</p>
+                        <span class="price">{{ workshop.price }} TL</span>
+                        <span class="date">{{ workshop.date|date:"d F Y, H:i" }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %} 

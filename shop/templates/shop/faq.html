@@ -1,0 +1,54 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}Coffee Shop - Sıkça Sorulan Sorular{% endblock %}
+
+{% block content %}
+<div class="faq-container">
+    <h1>Sıkça Sorulan Sorular</h1>
+    <p class="faq-intro">Kahve dünyası ile ilgili merak ettiğiniz tüm sorular ve cevapları burada.</p>
+
+    <div class="faq-content">
+        <div class="faq-list">
+            {% for faq in faqs %}
+                <div class="faq-item">
+                    <button class="faq-button">
+                        {{ faq.question }}
+                        <span class="icon">+</span>
+                    </button>
+                    <div class="faq-panel">
+                        <p>{{ faq.answer }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p style="color: white; text-align: center;">Henüz soru eklenmemiş.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.faq-button');
+    
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            const panel = button.nextElementSibling;
+            const icon = button.querySelector('.icon');
+            
+            // Diğer panelleri kapat
+            document.querySelectorAll('.faq-panel').forEach(p => {
+                if (p !== panel && p.classList.contains('active')) {
+                    p.classList.remove('active');
+                    p.previousElementSibling.querySelector('.icon').textContent = '+';
+                }
+            });
+            
+            // Tıklanan paneli aç/kapat
+            panel.classList.toggle('active');
+            icon.textContent = panel.classList.contains('active') ? '×' : '+';
+        });
+    });
+});
+</script>
+{% endblock %} 

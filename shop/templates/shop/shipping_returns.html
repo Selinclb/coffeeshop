@@ -1,0 +1,27 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}Gönderim ve İadeler - Coffee Shop{% endblock %}
+
+{% block content %}
+<main class="shipping-returns-page">
+    <div class="description-container">
+        {% if shipping_returns %}
+            <h1>{{ shipping_returns.title }}</h1>
+            {% if shipping_returns.description %}
+                {{ shipping_returns.description|linebreaks }}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="content-container">
+        <h5>Gönderim Politikası</h5>
+        {% if shipping_returns.shipping_content %}
+            {{ shipping_returns.shipping_content|linebreaks }}
+        {% endif %}
+        <h5>İade ve Değişim Politikası</h5>
+        {% if shipping_returns.return_content %}
+            {{ shipping_returns.return_content|linebreaks }}
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

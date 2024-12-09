@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Coffee Shop{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap">
+    {% block extra_css %}{% endblock %}
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <a href="{% url 'shop:index' %}" class="logo">
+                Coffee <span class="logo-shop">Shop</span>
+            </a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="{% url 'shop:product_list' %}" class="nav-link">Kahvelerimiz</a></li>
+                <li><a href="{% url 'shop:atolyeler' %}" class="nav-link">Atölyelerimiz</a></li>
+                <li><a href="{% url 'settings:about' %}" class="nav-link">Hakkımızda</a></li>
+                <li><a href="{% url 'settings:faq' %}" class="nav-link">SSS</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            {% if user.is_authenticated %}
+                <div class="user-menu-wrapper">
+                    <a href="#" class="login">
+                        <i class="fas fa-user"></i>
+                        <span>Profilim</span>
+                    </a>
+                </div>
+            {% else %}
+                <a href="{% url 'shop:login' %}" class="login">
+                    <i class="fas fa-user"></i>
+                    <span>Giriş</span>
+                </a>
+            {% endif %}
+            <a href="{% url 'order:cart' %}" class="cart">
+                <i class="fas fa-shopping-cart"></i>
+                Sepet 
+                <span class="cart-count">{{ cart_count }}</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Ana İçerik -->
+    {% block content %}{% endblock %}
+ 
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Bülten Bölümü -->
+            <div class="footer-section">
+                <h3>Bize Ulaşın</h3>
+                <p>Abonelik fırsatlarından ve sınırlı üretim kutulardan haberdar olmak için kaydolun</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="E-postanızı girin *" required>
+                    <button type="submit">Gönder</button>
+                </form>
+            </div>
+
+            <!-- Mağaza Bölümü -->
+            <div class="footer-section">
+                <h3>Mağaza</h3>
+                <ul>
+                    <li><a href="{% url 'shop:product_list' %}">Tek Kökenli ve Harman</a></li>
+                    <li><a href="{% url 'shop:atolyeler' %}">Atölyelerimiz</a></li>
+                    <li><a href="{% url 'settings:shipping_returns' %}">Gönderim ve İadeler</a></li>
+                    <li><a href="{% url 'settings:shop_policy' %}">Mağaza Politikası</a></li>
+                    <li><a href="{% url 'settings:shop_policy' %}">Ödeme Yöntemleri</a></li>
+                    <li><a href="#">Çerez Politikası</a></li>
+                    <li><a href="{% url 'settings:faq' %}">SSS</a></li>
+                </ul>
+            </div>
+
+            <!-- İletişim Bölümü -->
+            <div class="footer-section">
+                <h3>İletişim</h3>
+                {% if contact_info %}
+                    <address class="contact-info">
+                        <p>{{ contact_info.address }}</p>
+                        <p><a href="mailto:{{ contact_info.email }}">{{ contact_info.email }}</a></p>
+                        <p>Tel: <a href="tel:{{ contact_info.phone }}">{{ contact_info.phone }}</a></p>
+                    </address>
+                    <div class="social-links">
+                        {% if contact_info.facebook %}
+                            <a href="{{ contact_info.facebook }}" target="_blank">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                        {% endif %}
+                        {% if contact_info.twitter %}
+                            <a href="{{ contact_info.twitter }}" target="_blank">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        {% endif %}
+                        {% if contact_info.instagram %}
+                            <a href="{{ contact_info.instagram }}" target="_blank">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024, Coffee Shop.</p>
+        </div>
+    </footer>
+    
+    <!-- JavaScript dosyaları -->
+    <script src="{% static 'js/script.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

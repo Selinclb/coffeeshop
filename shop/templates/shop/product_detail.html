@@ -1,0 +1,110 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.title }} - Coffee Club{% endblock %}
+
+{% block content %}
+<main class="product-detail-page">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="{% url 'shop:index' %}">Ana Sayfa</a> / 
+        <a href="{% url 'shop:product_list' %}">Mağaza</a> / 
+        <span>{{ product.title }}</span>
+    </div>
+    <div class="product-detail-container">
+        <!-- Sol Taraf - Ürün Görseli ve Açıklaması -->
+        <div class="product-left-section">
+            <div class="product-images">
+                <!-- Ana görsel -->
+                <div class="main-image">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.title }}" id="mainImage">
+                    {% endif %}
+                </div>
+                <!-- Diğer görseller -->
+                <div class="product-thumbnails">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" 
+                             alt="{{ product.title }}" 
+                             onclick="changeMainImage(this.src)"
+                             class="thumbnail active">
+                    {% endif %}
+                    {% for img in product.get_images %}
+                        <img src="{{ img.image.url }}" 
+                             alt="{{ product.title }}" 
+                             onclick="changeMainImage(this.src)"
+                             class="thumbnail">
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Ürün Açıklaması -->
+            <div class="product-description">
+                <h5>Ürün Açıklaması</h5>
+                {{ product.description|linebreaks }}
+            </div>
+        </div>
+
+        <!-- Sağ Taraf - Ürün Bilgileri -->
+        <div class="product-content">
+            <h1>{{ product.title }}</h1>
+            <div class="product-meta">
+                <span class="sku">Stok kodu: {{ product.sku|default:"001" }}</span>
+            </div>
+            
+            <div class="product-price" data-base-price="{{ product.sale_price|default:product.price }}">
+                {% if product.is_on_sale %}
+                    <span class="original-price">{{ product.price }}₺</span>
+                    <span class="sale-price">{{ product.sale_price }}₺</span>
+                {% else %}
+                    <span class="price">{{ product.price }}₺</span>
+                {% endif %}
+            </div>
+            
+
+            <div class="add-to-cart-section">
+                <form method="POST" action="{% url 'order:add_to_cart' product.slug %}" class="add-to-cart-form">
+                    {% csrf_token %}
+                    <div class="quantity-selector">
+                        <div class="quantity-controls" data-max-amount="{{ product.amount }}">
+                            <button type="button" class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                            <input type="number" name="quantity" value="1" min="1" max="{{ product.amount }}" class="quantity" readonly>
+                            <button type="button" class="quantity-btn" onclick="increaseQuantity()">+</button>
+                        </div>
+                    </div>
+                    <button type="button" class="add-to-cart" onclick="addToCart(event)">Sepete Ekle</button>
+                </form>
+                <button type="button" class="buy-now" onclick="buyNow()">Şimdi Satın Al</button>
+            </div>
+
+            <!-- Ürün Detayları Accordion -->
+            <div class="product-accordion">
+                <div class="accordion-item">
+                    <button class="accordion-header">Ürün Bilgileri</button>
+                    <div class="accordion-content">
+                        <p>{{ product.description|linebreaks }}</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <button class="accordion-header">Ürün ve Para İade Politikası</button>
+                    <div class="accordion-content">
+                        <p>{{ product.description|linebreaks }}</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">Gönderim Bilgisi</button>
+                    <div class="accordion-content">
+                        <p>Gönderim süreçleri ve kargo bilgileri...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+{%block extra_js%}
+<script src="{% static 'js/product_detail.js' %}"></script>
+<script src="{% static 'js/cart.js' %}"></script>
+{% endblock %}

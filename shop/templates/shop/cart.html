@@ -1,0 +1,83 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}Sepetim - Coffee Club{% endblock %}
+
+{% block content %}
+<main class="cart-page">
+    <div class="cart-container">
+        <div class="cart-left">
+            <h2>Alışveriş Sepetim</h2>
+            
+            {% if cart_empty %}
+                <div id="emptyCart" class="empty-cart-message">
+                    <p>Sepetinizde ürün bulunmamaktadır.</p>
+                    <a href="{% url 'shop:product_list' %}" class="continue-shopping">Alışverişe Başla</a>
+                </div>
+            {% else %}
+                <div class="cart-items" id="cartItems">
+                    {% csrf_token %}
+                    {% for item in cart_items %}
+                        <div class="cart-item" data-item-id="{{ item.id }}">
+                            <div class="item-image">
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.title }}">
+                            </div>
+                            <div class="item-info">
+                                <h3>{{ item.product.title }}</h3>
+                                <p class="item-price">{{ item.product.price }}₺</p>
+                            </div>
+                            <div class="item-quantity">
+                                <button type="button" class="quantity-btn" onclick="updateQuantity({{ item.id }}, 'decrease')">-</button>
+                                <input type="number" class="quantity" value="{{ item.quantity }}" min="1" readonly>
+                                <button type="button" class="quantity-btn" onclick="updateQuantity({{ item.id }}, 'increase')">+</button>
+                            </div>
+                            <div class="item-total">
+                                {{ item.amount }}₺
+                            </div>
+                            <button type="button" class="remove-btn" onclick="removeFromCart({{ item.id }})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="cart-actions">
+                    {% comment %} <div class="promo-code">
+                        <input type="text" placeholder="Bir promosyon kodu girin">
+                        <button class="apply-promo">Uygula</button>
+                    </div> {% endcomment %}
+                    <div class="order-note">
+                        <textarea placeholder="Sipariş Notu"></textarea>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="cart-right">
+            <div class="order-summary">
+                <h2>Sipariş Özeti</h2>
+                <div class="summary-row">
+                    <span>Ara Toplam</span>
+                    <span id="subtotal">{{ subtotal }}₺</span>
+                </div>
+                <div class="summary-row" id="shipping-row" {% if cart_empty %}style="display: none;"{% endif %}>
+                    <span>Kargo Ücreti</span>
+                    <span id="shipping">{{ shipping_cost }}₺</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Toplam</span>
+                    <span id="total">{{ total }}₺</span>
+                </div>
+                <button class="checkout-btn">Ödemeye Geç</button>
+                <div class="secure-checkout">
+                    <i class="fas fa-lock"></i>
+                    <span>Güvenli Ödeme</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/cart.js' %}"></script>
+{% endblock %} 
