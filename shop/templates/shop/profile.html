@@ -1,0 +1,70 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<div class="container" style="margin-top: 120px;">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="profile-sidebar">
+                <div class="user-info mb-4">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-circle fa-3x"></i>
+                    </div>
+                    <h5 class="mt-2">{{ request.user.username }}</h5>
+                </div>
+                <div class="profile-nav">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#profile" data-section="profile">
+                                <i class="fas fa-user"></i> Hesap Bilgilerim
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#orders" data-section="orders">
+                                <i class="fas fa-shopping-bag"></i> Siparişlerim
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#addresses" data-section="addresses">
+                                <i class="fas fa-map-marker-alt"></i> Adreslerim
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#password" data-section="password">
+                                <i class="fas fa-lock"></i> Şifre Değiştir
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'shop:logout' %}">
+                                <i class="fas fa-sign-out-alt"></i> Çıkış Yap
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ana İçerik -->
+        <div class="col-md-9">
+            <div class="profile-content">
+                <!-- İçerik JavaScript ile yüklenecek -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // CSRF token'ı template'den al
+    const csrfToken = "{{ csrf_token }}";
+    
+    // Profil verilerini template'den JavaScript'e aktar
+    const profileData = {
+        username: "{{ request.user.username }}",
+        email: "{{ request.user.email }}",
+        phone: "{{ profile.phone|default:'' }}",
+        address: "{{ profile.address|default:'' }}",
+        city: "{{ profile.city|default:'' }}"
+        
+    };
+</script>
+{% endblock %}

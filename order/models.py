@@ -48,3 +48,18 @@ class Order(models.Model):
 
     def __str__(self):
         return self.shipname
+    
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Kullanıcı')
+    phone = models.CharField(max_length=20, verbose_name='Telefon')
+    address = models.CharField(max_length=150, verbose_name='Adres')
+    city = models.CharField(max_length=20, verbose_name='Şehir')
+ 
+
+    class Meta:
+        verbose_name = 'Profil'
+        verbose_name_plural = 'Profiller'
+
+    def __str__(self):
+        return self.user.username
+    

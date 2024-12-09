@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .models import Cart
+from .models import Cart, Order, Profile
 from shop.models import Product
 from settings.models import Settings
 import json
@@ -149,3 +149,59 @@ def remove_cart_item(request, item_id):
             'success': False, 
             'error': str(e)
         }, status=400)
+    
+
+@login_required
+def profile_view(request):
+    profile, created = Profile.objects.get_or_create(
+        user=request.user,
+        defaults={
+            'phone': '',
+            'address': '',
+            'city': '',
+        }
+    )
+    
+    if request.method == 'POST':
+        try:
+            # Form verilerini al
+            phone = request.POST.get('phone', '')
+            address = request.POST.get('address', '')
+            city = request.POST.get('city', '')
+            
+            # Profili güncelle
+            profile.phone = phone
+            profile.address = address
+            profile.city = city
+            profile.save()
+            
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Profil bilgileriniz başarıyla güncellendi.'
+                })
+            else:
+                messages.success(request, 'Profil bilgileriniz başarıyla güncellendi.')
+                return redirect('order:profile')
+                
+        except Exception as e:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': False,
+                    'message': str(e)
+                }, status=400)
+            else:
+                messages.error(request, f'Bir hata oluştu: {str(e)}')
+                return redirect('order:profile')
+    
+    context = {
+        'profile': profile,
+    }
+    return render(request, 'shop/profile.html', context)
+
+@login_required
+def siparislerim(request):
+    orders = Order.objects.filter(user=request.user)
+    return render(request, 'shop/siparislerim.html', {'orders': orders})
+
+

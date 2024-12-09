@@ -1,0 +1,153 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<div class="container" style="margin-top: 120px;">
+    <h1>Siparişlerim</h1>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Sipariş No</th>
+                    <th>Tarih</th>
+                    <th>Toplam</th>
+                    <th>Durum</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>#{{ order.id }}</td>
+                    <td>{{ order.date|date:"d/m/Y" }}</td>
+                    <td>{{ order.total }} TL</td>
+                    <td>
+                        <span class="badge bg-{{ order.get_status_color }}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="showOrderDetails({{ order.id }})">
+                            <i class="fas fa-eye"></i> Detay
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-4">
+                        <i class="fas fa-box-open fa-3x mb-3 text-muted"></i>
+                        <p class="text-muted">Henüz siparişiniz bulunmuyor.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function showOrderDetails(orderId) {
+    // Sipariş detaylarını AJAX ile yükle
+    fetch(`/siparis/detay/${orderId}/`)
+        .then(response => response.json())
+        .then(data => {
+            const modalHtml = `
+                <div class="modal fade" id="orderDetailModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-shopping-bag me-2"></i>
+                                    Sipariş #${data.id} Detayı
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="order-info mb-4">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><i class="fas fa-calendar me-2"></i>Tarih: ${data.date}</p>
+                                            <p><i class="fas fa-truck me-2"></i>Durum: 
+                                                <span class="badge bg-${data.status_color}">${data.status}</span>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><i class="fas fa-map-marker-alt me-2"></i>Teslimat Adresi:</p>
+                                            <address class="ms-4">
+                                                ${data.address}<br>
+                                                ${data.city}, ${data.country}
+                                            </address>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Ürün</th>
+                                                <th>Adet</th>
+                                                <th>Birim Fiyat</th>
+                                                <th>Toplam</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${data.items.map(item => `
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="${item.image}" alt="${item.name}" class="me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                                            <div>
+                                                                <div class="fw-bold">${item.name}</div>
+                                                                ${item.options ? `<small class="text-muted">${item.options}</small>` : ''}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>${item.quantity}</td>
+                                                    <td>${item.price} TL</td>
+                                                    <td>${item.total} TL</td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="3" class="text-end"><strong>Ara Toplam:</strong></td>
+                                                <td>${data.subtotal} TL</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3" class="text-end"><strong>Kargo:</strong></td>
+                                                <td>${data.shipping} TL</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3" class="text-end"><strong>Toplam:</strong></td>
+                                                <td><strong>${data.total} TL</strong></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Varsa eski modalı kaldır
+            const existingModal = document.getElementById('orderDetailModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            // Yeni modalı ekle ve göster
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
+            modal.show();
+        })
+        .catch(error => {
+            console.error('Hata:', error);
+            alert('Sipariş detayları yüklenemedi.');
+        });
+}
+</script>
+{% endblock %}

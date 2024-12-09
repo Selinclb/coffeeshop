@@ -45,7 +45,7 @@
                                             <span class="price">{{ product.price }} TL</span>
                                         {% endif %}
                                     </div>
-                                    <button class="add-to-cart">Sipariş Ver</button>
+                                    <button class="add-to-cart"><a href="{% url 'shop:product_detail' product.slug %}">Sipariş Ver</a></button>
                                 </div>
                             </div>
                         </div>
